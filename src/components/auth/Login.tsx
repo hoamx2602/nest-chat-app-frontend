@@ -13,6 +13,7 @@ const Login = () => {
     <Auth
       submitLabel="Login"
       onSubmit={handleLogin}
+      error={error ? "Credentials are not valid!" : ""}
     >
       <Link to={"/signup"} style={{ alignSelf: "center" }}>
         <MUILink>SignUp</MUILink>
