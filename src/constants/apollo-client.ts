@@ -2,21 +2,20 @@ import { ApolloClient, HttpLink, InMemoryCache, from } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 import { API_URL } from "./url";
 import excludedRoutes from "./excluded-routes";
-import router from "../components/Routes";
+import { onLogout } from "../utils/logout";
 
 const logoutLink = onError(({ graphQLErrors, networkError }) => {
   if (
     graphQLErrors?.length &&
     (graphQLErrors[0].extensions.originalError as any).statusCode === 401
   ) {
-    console.log('🟢====>11111', 11111);
+    console.log("🟢====>11111", 11111);
     if (!excludedRoutes.includes(window.location.pathname)) {
-      client.resetStore();
-      router.navigate("/login");
+      onLogout();
     }
   }
 
-  if (networkError) console.error(`[Network error]: ${networkError}`)
+  if (networkError) console.error(`[Network error]: ${networkError}`);
 });
 
 const httpLink = new HttpLink({ uri: `${API_URL}/graphql` });
