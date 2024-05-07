@@ -8,6 +8,8 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useLogout } from "../../hooks/useLogout";
 import { onLogout } from "../../utils/logout";
+import { snackVar } from "../../constants/snack";
+import { UNKNOW_ERROR_SNACK_MESSAGE } from "../../constants/error";
 
 const Settings = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -50,9 +52,14 @@ const Settings = () => {
         <MenuItem
           key={"logout"}
           onClick={async () => {
-            await logout();
-            onLogout();
-            handleCloseUserMenu();
+            try {
+              await logout();
+              onLogout();
+              handleCloseUserMenu();
+            } catch (error) {
+              snackVar(UNKNOW_ERROR_SNACK_MESSAGE);
+            }
+
           }}
         >
           <Typography textAlign="center">Logout</Typography>
