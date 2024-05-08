@@ -16,6 +16,7 @@ import { useCreateMessage } from "../../hooks/useCreateMessage";
 import { useEffect, useRef, useState } from "react";
 import { useGetMessages } from "../../hooks/useGetMessages";
 import { useMessageCreated } from "../../hooks/useMessageCreated";
+import { Message } from "../../gql/graphql";
 
 const Chat = () => {
   const params = useParams();
@@ -24,15 +25,31 @@ const Chat = () => {
 
   const { data } = useGetChat({ _id: chatId });
   const [createMessage] = useCreateMessage(chatId);
-  const { data: messages } = useGetMessages({ chatId });
+  const { data: existingMessages } = useGetMessages({ chatId });
   const { data: latestMessage } = useMessageCreated({ chatId });
 
-  console.log('🟢====>latestMessage', latestMessage);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const divRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
 
   const scrollToBottom = () => divRef.current?.scrollIntoView();
+
+  useEffect(() => {
+    if (existingMessages) {
+      setMessages(existingMessages.messages);
+    }
+  }, [existingMessages]);
+
+  useEffect(() => {
+    const existingLatestMessage = messages[message.length - 1]?._id;
+    if (
+      latestMessage?.messageCreated &&
+      existingLatestMessage !== latestMessage.messageCreated._id
+    ) {
+      setMessages([...messages, latestMessage.messageCreated]);
+    }
+  }, [latestMessage]);
 
   useEffect(() => {
     setMessage("");
@@ -49,11 +66,16 @@ const Chat = () => {
     scrollToBottom();
   };
 
+  const sortMessage = (messageA: Message, messageB: Message) =>
+    new Date(messageA.createdAt).getTime() -
+    new Date(messageB.createdAt).getTime();
+
   return (
     <Stack sx={{ height: "100%", justifyContent: "space-between" }}>
       <h1>{data?.chat.name}</h1>
       <Box sx={{ maxHeight: "70vh", overflow: "auto" }}>
-        {messages?.messages.map((message) => (
+        {/* Mapping messages */}
+        {[...messages].sort(sortMessage).map((message) => (
           <Grid container alignItems="center" marginBottom="1rem">
             <Grid item xs={2} lg={1}>
               <Avatar src="" sx={{ width: 52, height: 52 }} />
