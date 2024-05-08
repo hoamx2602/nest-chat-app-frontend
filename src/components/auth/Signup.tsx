@@ -34,6 +34,7 @@ const Signup = () => {
             variables: {
               createUserInput: {
                 email,
+                username,
                 password,
               },
             },
