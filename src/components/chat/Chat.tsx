@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useGetChat } from "../../hooks/useGetChat";
 import {
   Avatar,
@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useCreateMessage } from "../../hooks/useCreateMessage";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGetMessages } from "../../hooks/useGetMessages";
 
 const Chat = () => {
@@ -25,6 +25,16 @@ const Chat = () => {
   const [createMessage] = useCreateMessage(chatId);
   const { data: messages } = useGetMessages({ chatId });
 
+  const divRef = useRef<HTMLDivElement | null>(null);
+  const location = useLocation();
+
+  const scrollToBottom = () => divRef.current?.scrollIntoView();
+
+  useEffect(() => {
+    setMessage("");
+    scrollToBottom();
+  }, [location, messages]);
+
   const handleCreateMessage = async () => {
     await createMessage({
       variables: {
@@ -32,6 +42,7 @@ const Chat = () => {
       },
     });
     setMessage("");
+    scrollToBottom();
   };
 
   return (
@@ -57,6 +68,7 @@ const Chat = () => {
             </Grid>
           </Grid>
         ))}
+        <div ref={divRef}></div>
       </Box>
       <Paper
         sx={{
