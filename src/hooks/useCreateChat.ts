@@ -19,6 +19,7 @@ const useCreateChat = () => { // Example: Updating the cache after a mutation: h
             const newChatRef = cache.writeFragment({
               data: data?.createChat,
               fragment: ChatFragment,
+              fragmentName: "ChatFragment"
             });
             return [...existingChats, newChatRef];
           },
