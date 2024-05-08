@@ -24,32 +24,14 @@ const Chat = () => {
   const chatId = params._id!;
 
   const { data } = useGetChat({ _id: chatId });
-  const [createMessage] = useCreateMessage(chatId);
-  const { data: existingMessages } = useGetMessages({ chatId });
-  const { data: latestMessage } = useMessageCreated({ chatId });
-
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [createMessage] = useCreateMessage();
+  const { data: messages } = useGetMessages({ chatId });
+  useMessageCreated({ chatId });
 
   const divRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
 
   const scrollToBottom = () => divRef.current?.scrollIntoView();
-
-  useEffect(() => {
-    if (existingMessages) {
-      setMessages(existingMessages.messages);
-    }
-  }, [existingMessages]);
-
-  useEffect(() => {
-    const existingLatestMessage = messages[message.length - 1]?._id;
-    if (
-      latestMessage?.messageCreated &&
-      existingLatestMessage !== latestMessage.messageCreated._id
-    ) {
-      setMessages([...messages, latestMessage.messageCreated]);
-    }
-  }, [latestMessage]);
 
   useEffect(() => {
     setMessage("");
@@ -75,25 +57,26 @@ const Chat = () => {
       <h1>{data?.chat.name}</h1>
       <Box sx={{ maxHeight: "70vh", overflow: "auto" }}>
         {/* Mapping messages */}
-        {[...messages].sort(sortMessage).map((message) => (
-          <Grid container alignItems="center" marginBottom="1rem">
-            <Grid item xs={2} lg={1}>
-              <Avatar src="" sx={{ width: 52, height: 52 }} />
-            </Grid>
-            <Grid item xs={10} lg={11}>
-              <Stack>
-                <Paper sx={{ width: "fit-content" }}>
-                  <Typography sx={{ padding: "0.9rem" }}>
-                    {message.content}
+        {messages &&
+          [...messages.messages].sort(sortMessage).map((message) => (
+            <Grid container alignItems="center" marginBottom="1rem">
+              <Grid item xs={2} lg={1}>
+                <Avatar src="" sx={{ width: 52, height: 52 }} />
+              </Grid>
+              <Grid item xs={10} lg={11}>
+                <Stack>
+                  <Paper sx={{ width: "fit-content" }}>
+                    <Typography sx={{ padding: "0.9rem" }}>
+                      {message.content}
+                    </Typography>
+                  </Paper>
+                  <Typography variant="caption" sx={{ marginLeft: "0.25rem" }}>
+                    {new Date(message.createdAt).toLocaleTimeString()}
                   </Typography>
-                </Paper>
-                <Typography variant="caption" sx={{ marginLeft: "0.25rem" }}>
-                  {new Date(message.createdAt).toLocaleTimeString()}
-                </Typography>
-              </Stack>
+                </Stack>
+              </Grid>
             </Grid>
-          </Grid>
-        ))}
+          ))}
         <div ref={divRef}></div>
       </Box>
       <Paper
