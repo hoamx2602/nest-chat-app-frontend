@@ -15,7 +15,7 @@ const ChatList = () => {
   const { data } = useGetChats();
   const { path } = usePath();
 
-  useMessageCreated({ chatIds: data?.chats.map(chat => chat._id) || [] })
+  useMessageCreated({ chatIds: data?.chats.map((chat) => chat._id) || [] });
 
   useEffect(() => {
     const pathSplit = path.split("chats/");
@@ -41,14 +41,24 @@ const ChatList = () => {
             overflow: "auto",
           }}
         >
-          {data?.chats
-            .map((chat) => (
-              <ChatListItem
-                chat={chat}
-                selected={chat._id === selectedChatId}
-              />
-            ))
-            .reverse()}
+          {data?.chats &&
+            [...data.chats]
+              .sort((chatA, chatB) => {
+                if (!chatA.latestMessage) {
+                  return -1;
+                }
+                return (
+                  new Date(chatA.latestMessage?.createdAt).getTime() -
+                  new Date(chatB.latestMessage?.createdAt).getTime()
+                );
+              })
+              .map((chat) => (
+                <ChatListItem
+                  chat={chat}
+                  selected={chat._id === selectedChatId}
+                />
+              ))
+              .reverse()}
         </List>
       </Stack>
     </>
