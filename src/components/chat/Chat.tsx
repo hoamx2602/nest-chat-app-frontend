@@ -22,6 +22,15 @@ const Chat = () => {
   const [createMessage] = useCreateMessage(chatId);
   const { data: messages } = useGetMessages({ chatId });
 
+  const handleCreateMessage = async () => {
+    await createMessage({
+      variables: {
+        createMessageInput: { content: message, chatId: chatId },
+      },
+    });
+    setMessage("");
+  };
+
   return (
     <Stack sx={{ height: "100%", justifyContent: "space-between" }}>
       <h1>{data?.chat.name}</h1>
@@ -44,18 +53,17 @@ const Chat = () => {
           placeholder="Message"
           onChange={(event) => setMessage(event.target.value)}
           value={message}
+          onKeyDown={async (event) => {
+            if (event.key === "Enter") {
+              await handleCreateMessage();
+            }
+          }}
         />
         <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
         <IconButton
           color="primary"
           sx={{ p: "10px" }}
-          onClick={async () => {
-            await createMessage({
-              variables: {
-                createMessageInput: { content: message, chatId: chatId },
-              },
-            });
-          }}
+          onClick={handleCreateMessage}
         >
           <SendIcon />
         </IconButton>
