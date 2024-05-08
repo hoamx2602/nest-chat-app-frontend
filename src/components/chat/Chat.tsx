@@ -15,7 +15,6 @@ import SendIcon from "@mui/icons-material/Send";
 import { useCreateMessage } from "../../hooks/useCreateMessage";
 import { useEffect, useRef, useState } from "react";
 import { useGetMessages } from "../../hooks/useGetMessages";
-import { useMessageCreated } from "../../hooks/useMessageCreated";
 import { Message } from "../../gql/graphql";
 
 const Chat = () => {
@@ -26,7 +25,6 @@ const Chat = () => {
   const { data } = useGetChat({ _id: chatId });
   const [createMessage] = useCreateMessage();
   const { data: messages } = useGetMessages({ chatId });
-  useMessageCreated({ chatId });
 
   const divRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
