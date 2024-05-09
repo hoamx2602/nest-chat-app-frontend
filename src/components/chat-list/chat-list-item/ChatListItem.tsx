@@ -1,4 +1,4 @@
-import { Divider, ListItemButton } from "@mui/material";
+import { Box, Divider, ListItemButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import router from "../../Routes";
 import { Chat } from "../../../gql/graphql";
+import "./ChatListItem.css";
 
 interface ChatListItemProps {
   chat: Chat;
@@ -27,7 +28,9 @@ const ChatListItem = ({ chat, selected }: ChatListItemProps) => {
           <ListItemText
             primary={chat.name}
             secondary={
-              <React.Fragment>
+              <Box
+                sx={{ display: "flex", flexDirection: "row", gap: "0.5rem" }}
+              >
                 <Typography
                   sx={{ display: "inline" }}
                   component="span"
@@ -36,13 +39,15 @@ const ChatListItem = ({ chat, selected }: ChatListItemProps) => {
                 >
                   {chat.latestMessage?.user.username || ""}
                 </Typography>
-                {" " + (chat.latestMessage?.content || "")}
-              </React.Fragment>
+                <div className="content">
+                  {" " + (chat.latestMessage?.content || "")}
+                </div>
+              </Box>
             }
           />
         </ListItemButton>
       </ListItem>
-      <Divider variant="inset"/>
+      <Divider variant="inset" />
     </>
   );
 };
