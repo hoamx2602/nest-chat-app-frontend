@@ -10,6 +10,7 @@ import { useLogout } from "../../hooks/useLogout";
 import { onLogout } from "../../utils/logout";
 import { snackVar } from "../../constants/snack";
 import { UNKNOW_ERROR_SNACK_MESSAGE } from "../../constants/error";
+import router from "../Routes";
 
 const Settings = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -49,6 +50,9 @@ const Settings = () => {
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
       >
+        <MenuItem key="profile" onClick={() => router.navigate("/profile")}>
+          <Typography textAlign="center">Profile</Typography>
+        </MenuItem>
         <MenuItem
           key={"logout"}
           onClick={async () => {
@@ -59,7 +63,6 @@ const Settings = () => {
             } catch (error) {
               snackVar(UNKNOW_ERROR_SNACK_MESSAGE);
             }
-
           }}
         >
           <Typography textAlign="center">Logout</Typography>
