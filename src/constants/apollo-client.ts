@@ -1,4 +1,10 @@
-import { ApolloClient, HttpLink, InMemoryCache, from, split } from "@apollo/client";
+import {
+  ApolloClient,
+  HttpLink,
+  InMemoryCache,
+  from,
+  split,
+} from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 import { API_URL, WS_URL } from "./url";
 import excludedRoutes from "./excluded-routes";
@@ -41,16 +47,34 @@ const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
     return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
     );
   },
   wsLink,
-  httpLink,
+  httpLink
 );
 
+// https://www.apollographql.com/docs/react/pagination/cursor-based/#using-list-element-ids-as-cursors
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          chats: {
+            keyArgs: false,
+            merge(existing, incoming, { args }: any) {
+              const merged = existing ? existing.slice(0) : [];
+              for (let i = 0; i < incoming.length; ++i) {
+                merged[args.skip + i] = incoming[i];
+              }
+              return merged;
+            },
+          },
+        },
+      },
+    },
+  }),
   link: splitLink,
 });
 
