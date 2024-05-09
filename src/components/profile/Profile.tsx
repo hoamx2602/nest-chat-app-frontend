@@ -45,6 +45,7 @@ const Profile = () => {
           width: 256,
           height: 256,
         }}
+        src={me.data?.me.imageUrl}
       />
       <Button
         component="label"

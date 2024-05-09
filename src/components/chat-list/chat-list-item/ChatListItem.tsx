@@ -4,7 +4,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
 import router from "../../Routes";
 import { Chat } from "../../../gql/graphql";
 import "./ChatListItem.css";
@@ -23,7 +22,7 @@ const ChatListItem = ({ chat, selected }: ChatListItemProps) => {
           selected={selected}
         >
           <ListItemAvatar>
-            <Avatar alt="Remy Sharp" src="" />
+            <Avatar alt="Remy Sharp" src={chat.latestMessage?.user.imageUrl} />
           </ListItemAvatar>
           <ListItemText
             primary={chat.name}

@@ -90,7 +90,19 @@ const Chat = () => {
             [...messages.messages].sort(sortMessage).map((message) => (
               <Grid container alignItems="center" marginBottom="1rem">
                 <Grid item xs={2} lg={1}>
-                  <Avatar src="" sx={{ width: 52, height: 52 }} />
+                  <Stack
+                    spacing={1}
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Avatar
+                      src={message.user.imageUrl}
+                      sx={{ width: 52, height: 52 }}
+                    />
+                    <Typography variant="caption">
+                      {message.user.username}
+                    </Typography>
+                  </Stack>
                 </Grid>
                 <Grid item xs={10} lg={11}>
                   <Stack>
@@ -103,7 +115,8 @@ const Chat = () => {
                       variant="caption"
                       sx={{ marginLeft: "0.25rem" }}
                     >
-                      {new Date(message.createdAt).toLocaleTimeString()} -{" "} {new Date(message.createdAt).toLocaleDateString()}
+                      {new Date(message.createdAt).toLocaleTimeString()} -{" "}
+                      {new Date(message.createdAt).toLocaleDateString()}
                     </Typography>
                   </Stack>
                 </Grid>
