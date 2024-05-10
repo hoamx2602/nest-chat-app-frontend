@@ -12,8 +12,10 @@ import { onLogout } from "../utils/logout";
 import { snackVar } from "./snack";
 import { UNKNOW_ERROR_SNACK_MESSAGE } from "./error";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { setContext } from "@apollo/client/link/context";
 import { createClient } from "graphql-ws";
 import { getMainDefinition } from "@apollo/client/utilities";
+import { getToken } from "../utils/token";
 
 const logoutLink = onError(({ graphQLErrors, networkError }) => {
   if (
@@ -28,6 +30,15 @@ const logoutLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) {
     snackVar(UNKNOW_ERROR_SNACK_MESSAGE);
   }
+});
+
+const authLink = setContext((_, { headers }) => {
+  return {
+    headers: {
+      ...headers,
+      authorization: getToken(),
+    },
+  };
 });
 
 const httpLink = new HttpLink({ uri: `${API_URL}/graphql` });
@@ -73,7 +84,7 @@ const client = new ApolloClient({
       },
     },
   }),
-  link: splitLink,
+  link: logoutLink.concat(authLink).concat(splitLink),
 });
 
 function merge(existing: any, incoming: any, { args }: any) {
